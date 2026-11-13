@@ -14,6 +14,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Unpack word-pop.zip
+        run: |
+          if [ -f word-pop.zip ]; then
+            unzip -q -o word-pop.zip -d /tmp/wp
+            rm -rf /tmp/wp/word-pop/.github
+            cp -r /tmp/wp/word-pop/. .
+            git rm -q word-pop.zip
+            git add -A
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -q -m "Unpack game files from word-pop.zip"
+            git push
+          fi
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22

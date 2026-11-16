@@ -11,20 +11,27 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-24.04
+    env:
+      KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: Unpack word-pop.zip
+      - name: Unpack uploaded zip
         run: |
-          if [ -f word-pop.zip ]; then
-            unzip -q -o word-pop.zip -d /tmp/wp
-            rm -rf /tmp/wp/word-pop/.github
-            cp -r /tmp/wp/word-pop/. .
-            git rm -q word-pop.zip
+          Z=$(ls -t *.zip 2>/dev/null | head -1)
+          if [ -n "$Z" ]; then
+            echo "Unpacking $Z"
+            rm -rf /tmp/wp && mkdir /tmp/wp && unzip -q -o "$Z" -d /tmp/wp
+            P=$(find /tmp/wp -maxdepth 3 -name package.json -not -path "*/node_modules/*" | head -1)
+            SRC=$(dirname "$P")
+            rm -rf "$SRC/.github"
+            cp -r "$SRC/." .
+            git rm -q --ignore-unmatch *.zip; rm -f *.zip
             git add -A
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git commit -q -m "Unpack game files from word-pop.zip"
+            git commit -q -m "Unpack game files from $Z"
             git push
           fi
 
@@ -37,11 +44,8 @@ jobs:
           distribution: temurin
           java-version: 21
 
-
       - name: Install Capacitor
-        run: |
-          npm pkg delete devDependencies.@capacitor/assets
-          npm install --no-audit --no-fund --legacy-peer-deps
+        run: npm install --no-audit --no-fund --legacy-peer-deps
 
       - name: Create Android project
         run: npx cap add android
@@ -54,39 +58,51 @@ jobs:
           M=android/app/src/main/AndroidManifest.xml
           grep -q TTS_SERVICE "$M" || sed -i 's#</manifest>#    <queries>\n        <intent>\n            <action android:name="android.intent.action.TTS_SERVICE" />\n        </intent>\n    </queries>\n</manifest>#' "$M"
 
-      - name: Add app icon
-        continue-on-error: true
+      - name: Add the Word Pop Kids app icon
         run: |
           R=android/app/src/main/res
-          for d in mdpi:48 hdpi:72 xhdpi:96 xxhdpi:144 xxxhdpi:192; do
-            n=${d%%:*}; s=${d##*:}
-            mkdir -p $R/mipmap-$n
-            convert www/icons/icon-512.png -resize ${s}x${s} $R/mipmap-$n/ic_launcher.png
-            cp $R/mipmap-$n/ic_launcher.png $R/mipmap-$n/ic_launcher_round.png
-            rm -f $R/mipmap-$n/ic_launcher_foreground.png
-          done
-          rm -rf $R/mipmap-anydpi-v26
+          rm -f $R/mipmap-*/ic_launcher*.png $R/mipmap-*/ic_launcher*.webp
+          cp -r android-res/. $R/
+
+      - name: Set version number
+        run: |
+          G=android/app/build.gradle
+          sed -i -E "s/versionCode [0-9]+/versionCode ${{ github.run_number }}/" $G
+          sed -i -E "s/versionName \"[^\"]*\"/versionName \"1.2.${{ github.run_number }}\"/" $G
 
       - name: Build APK
         working-directory: android
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon --stacktrace
+          cp app/build/outputs/apk/debug/app-debug.apk ../WordPopKids.apk
 
-      - name: Rename APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk WordPop.apk
+      - name: Build Google Play file (.aab)
+        if: env.KEYSTORE_BASE64 != ''
+        working-directory: android
+        run: |
+          ./gradlew bundleRelease --no-daemon --stacktrace
+          echo "$KEYSTORE_BASE64" | base64 -d > /tmp/upload.jks
+          jarsigner -keystore /tmp/upload.jks -storepass "$KEYSTORE_PASSWORD" -keypass "$KEYSTORE_PASSWORD" \
+            -signedjar ../WordPopKids.aab app/build/outputs/bundle/release/app-release.aab upload
+          rm -f /tmp/upload.jks
 
       - name: Keep a copy on the run page
         uses: actions/upload-artifact@v4
         with:
-          name: WordPop-apk
-          path: WordPop.apk
+          name: WordPopKids-android
+          path: |
+            WordPopKids.apk
+            WordPopKids.aab
+          if-no-files-found: ignore
 
       - name: Publish to Releases
         uses: softprops/action-gh-release@v2
         with:
           tag_name: latest
-          name: Word Pop (latest build)
-          body: Download WordPop.apk below and open it on your Android phone to install.
-          files: WordPop.apk
+          name: Word Pop Kids (latest build)
+          body: WordPopKids.apk installs straight on an Android phone. WordPopKids.aab is the file for Google Play.
+          files: |
+            WordPopKids.apk
+            WordPopKids.aab
           make_latest: true

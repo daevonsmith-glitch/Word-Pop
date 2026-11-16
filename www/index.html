@@ -3,20 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Word Pop</title>
+<title>Word Pop Kids</title>
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon-192.png">
+<link rel="icon" href="icons/favicon-32.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Word Pop">
+<meta name="apple-mobile-web-app-title" content="Word Pop Kids">
 <meta name="theme-color" content="#1b1446">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
 <style>
+  @font-face { font-family:'Poppins'; font-weight:800; font-display:swap; src:url(fonts/Poppins-Bold.ttf) format('truetype'); }
+  @font-face { font-family:'Poppins'; font-weight:600; font-display:swap; src:url(fonts/Poppins-Medium.ttf) format('truetype'); }
   :root { --bg1:#1b1446; --bg2:#3a1f6e; --ink:#fff; --soft:rgba(255,255,255,.7); }
   * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
-  html,body { margin:0; height:100%; overflow:hidden; font-family:'Baloo 2', system-ui, sans-serif; color:var(--ink);
+  html,body { margin:0; height:100%; overflow:hidden; font-family:'Poppins', system-ui, sans-serif; color:var(--ink);
     background:radial-gradient(circle at 30% 20%, var(--bg2), var(--bg1) 70%); touch-action:manipulation; }
   #app { position:fixed; inset:0; display:flex; flex-direction:column;
     padding:calc(env(safe-area-inset-top) + 10px) 12px calc(env(safe-area-inset-bottom) + 10px); }
@@ -83,6 +84,49 @@
   .rbtn { border:0; border-radius:16px; padding:12px 16px; font:inherit; font-size:18px; font-weight:800; cursor:pointer; color:#2a1a5e; background:#c7d2fe; width:100%; margin-top:10px; }
   .rbtn.danger { background:rgba(255,255,255,.1); color:#fca5a5; font-size:15px; }
   #reportText { width:100%; height:180px; margin-top:10px; border-radius:14px; border:0; padding:10px; font:14px/1.35 ui-monospace,monospace; background:rgba(0,0,0,.3); color:#fff; display:none; user-select:text; -webkit-user-select:text; }
+  #emoji { cursor:pointer; }
+  #slots.long { gap:5px; }
+  #slots.long .slot { width:40px; height:50px; font-size:28px; border-radius:12px; }
+  .card h1.logo { font-size:52px; line-height:1.02; letter-spacing:2px; margin-bottom:4px;
+    text-shadow: 0 0 0 #fff, 3px 3px 0 #fff, -3px -3px 0 #fff, 3px -3px 0 #fff, -3px 3px 0 #fff, 0 3px 0 #fff, 0 -3px 0 #fff, 3px 0 0 #fff, -3px 0 0 #fff, 0 8px 18px rgba(0,0,0,.35); }
+  .card h1.logo .kids { display:inline-block; margin-top:8px; font-size:.5em; letter-spacing:.18em; padding:.12em .5em .08em .68em; border-radius:999px;
+    background:#ffd43b; color:#3b1d8f; border:3px solid #fff; text-shadow:none; box-shadow:0 6px 14px rgba(0,0,0,.3); }
+  #report > * { max-width:760px; margin-left:auto; margin-right:auto; }
+  /* Short phone screens: fit the whole menu without scrolling */
+  @media (max-height:780px) and (max-width:699px) {
+    .card { padding:18px 18px; }
+    .card h1.logo { font-size:40px; }
+    .card h1.logo .kids { margin-top:4px; border-width:2px; }
+    .card p { font-size:15px; margin:4px 0 10px; }
+    .big { font-size:19px; padding:10px; margin:7px 0; border-radius:14px; }
+    #abcBtn, #reportBtn { font-size:16px !important; }
+    .opt { font-size:15px; margin:5px 2px; }
+    .toggle { width:48px; height:28px; } .toggle::after { width:20px; height:20px; } .toggle.on::after { left:24px; }
+  }
+  /* Tablets and iPads: bigger letters, slots, picture and menu */
+  @media (min-width:700px) and (min-height:600px) {
+    #app { padding-left:24px; padding-right:24px; }
+    .pill { font-size:24px; padding:8px 20px; }
+    button.icon { width:58px; height:58px; font-size:28px; }
+    #emoji { font-size:96px; }
+    #slots { gap:12px; margin-top:14px; }
+    .slot { width:76px; height:92px; font-size:54px; border-radius:20px; }
+    #slots.long .slot { width:64px; height:80px; font-size:46px; }
+    .card { width:min(80vw,480px); padding:36px 34px; }
+    .card h1.logo { font-size:68px; }
+    .card p, .opt { font-size:22px; }
+    .big { font-size:26px; padding:18px; }
+    .toggle { width:66px; height:38px; } .toggle::after { width:30px; height:30px; } .toggle.on::after { left:32px; }
+    #cheer { font-size:80px; }
+  }
+  /* Big tablets (iPad, 10-inch Android): enlarge the menu and the progress report */
+  @media (min-width:900px) and (min-height:900px) {
+    .card { zoom:1.3; }
+    #report > * { zoom:1.35; }
+    #slots .slot { width:92px; height:110px; font-size:64px; }
+    #slots.long .slot { width:78px; height:96px; font-size:54px; }
+    #emoji { font-size:120px; }
+  }
 </style>
 </head>
 <body>
@@ -103,11 +147,12 @@
 
 <div id="overlay">
   <div class="card">
-    <h1>🫧 Word Pop</h1>
+    <h1 class="logo" aria-label="Word Pop Kids"><span style="color:#ff6b9d">W</span><span style="color:#ffa94d">O</span><span style="color:#ffd43b">R</span><span style="color:#69db7c">D</span><br><span style="color:#4dabf7">P</span><span style="color:#9775fa">O</span><span style="color:#f783ac">P</span><br><span class="kids">KIDS</span></h1>
     <p>Pop the letters in order to spell the word!</p>
     <button class="big" style="background:#a7f3d0" data-lvl="0">Easy · 3 letters</button>
     <button class="big" style="background:#fde68a" data-lvl="1">Medium · 4 letters</button>
     <button class="big" style="background:#fbcfe8" data-lvl="2">Big · 5 letters</button>
+    <button class="big" style="background:#bae6fd" data-lvl="3">Huge · 6+ letters</button>
     <div class="opt"><span>Show letter hints</span><button class="toggle on" id="tHint"></button></div>
     <div class="opt"><span>Sounds</span><button class="toggle on" id="tSound"></button></div>
     <div class="opt"><span>Calm mode (slow bubbles)</span><button class="toggle" id="tCalm"></button></div>
@@ -128,10 +173,12 @@
 
 <script>
 const WORDS = [
-  [["CAT","🐱"],["DOG","🐶"],["SUN","☀️"],["BUS","🚌"],["CAR","🚗"],["PIG","🐷"],["BEE","🐝"],["COW","🐮"],["HAT","🎩"],["CUP","🥤"],["EGG","🥚"],["FOX","🦊"],["BED","🛏️"],["BAT","🦇"],["PEN","🖊️"],["OWL","🦉"],["ANT","🐜"],["BOX","📦"]],
-  [["FISH","🐟"],["FROG","🐸"],["CAKE","🍰"],["BALL","⚽"],["STAR","⭐"],["MOON","🌙"],["BEAR","🐻"],["DUCK","🦆"],["TREE","🌳"],["BIKE","🚲"],["BOAT","⛵"],["LION","🦁"],["MILK","🥛"],["SOCK","🧦"],["KITE","🪁"],["RAIN","🌧️"],["SHIP","🚢"],["CORN","🌽"]],
-  [["APPLE","🍎"],["HOUSE","🏠"],["TRAIN","🚆"],["HORSE","🐴"],["PIZZA","🍕"],["TIGER","🐯"],["ROBOT","🤖"],["CLOCK","⏰"],["SNAKE","🐍"],["PLANE","✈️"],["MOUSE","🐭"],["WHALE","🐳"],["SHEEP","🐑"],["CLOUD","☁️"],["GRAPE","🍇"],["ZEBRA","🦓"],["TRUCK","🚚"],["SHARK","🦈"]]
-];
+  "ANT APE ARM ART AXE BAG BAT BED BEE BIB BIG BIN BIT BOX BOY BUD BUG BUN BUS CAB CAN CAP CAR CAT COB COD COG COT COW CRY CUB CUP CUT DAD DAM DAY DEN DIG DIM DIP DOG DOT DRY DUG EAR EAT EGG ELF ELK ELM END EYE FAN FAR FAT FED FIG FIN FIT FIX FLY FOG FOX FRY FUN FUR GAP GAS GEM GET GUM HAM HAS HAT HAY HEN HID HIM HIP HIT HOG HOP HOT HOW HUG HUM HUT ICE INK JAM JAR JAW JET JIG JOB JOG JOT JOY JUG KEG KEY KID KIT LAB LAD LAP LAY LEG LET LID LIP LIT LOG LOT LOW MAD MAN MAP MAT MAY MEN MET MIX MOM MOP MUD MUG NAP NET NEW NOD NOT NOW NUT OAK OAR ODD OFF OIL OLD ONE ORB OWL OWN PAD PAL PAN PAT PAW PAY PEA PEG PEN PET PIE PIG PIN PIT POD POP POT PUP PUT RAG RAM RAN RAT RAW RAY RED RIB RID RIM RIP ROD ROT ROW RUB RUG RUN SAD SAP SAT SAW SAY SEA SEE SET SEW SHY SIP SIT SIX SKI SKY SOB SON SOW SOY SPA SPY SUB SUM SUN TAB TAG TAN TAP TAR TEA TEN TIE TIN TIP TOE TON TOP TOW TOY TRY TUB TUG TWO URN VAN VAT VET WAG WAS WAX WAY WEB WED WET WHO WHY WIG WIN WOK WON YAK YAM YAP YES YET YUM ZAP ZIG ZIP ZOO",
+  "GIFT ABLE ACRE AUNT BABY BACK BAKE BALL BAND BANK BARN BASE BATH BEAD BEAK BEAM BEAN BEAR BEAT BELL BELT BEND BEST BIKE BIRD BITE BLUE BOAT BODY BONE BOOK BOOT BOWL BRAG BRAN BULB BUMP BUNK BURN BUSH BUSY CAGE CAKE CALF CALL CALM CAME CAMP CAPE CARD CARE CART CASE CAVE CENT CHAT CHIN CHIP CHOP CITY CLAM CLAP CLAW CLAY CLIP CLOG CLUB CLUE COAL COAT CODE COIN COLD COLT COMB COME CONE COOK COOL COPY CORD CORN COST CRAB CRIB CROP CROW CUBE CUTE DARK DART DASH DATE DAWN DECK DEEP DEER DESK DIME DINE DISH DIVE DOCK DOLL DOME DOOR DOVE DOWN DRAG DRAW DRIP DROP DRUM DUCK DUNE DUST EACH EAST EASY EDGE FACE FAIR FALL FAME FARM FAST FEED FEEL FEET FERN FILM FIND FINE FIRE FIRM FISH FIST FIVE FLAG FLAP FLAT FLIP FLOW FOAM FOLD FOLK FOOD FOOT FORK FORT FOUR FREE FROG FROM FUEL FULL GATE GAVE GEAR GIRL GIVE GLAD GLOW GLUE GOAL GOAT GOLD GOLF GOOD GOWN GRAB GRAY GREW GRIN GRIP GROW GULP HAIR HALF HALL HAND HANG HARD HARP HAVE HAWK HEAD HEAL HEAP HEAR HEAT HELP HERB HERE HERO HIDE HIGH HIKE HILL HINT HIVE HOLD HOLE HOME HOOD HOOK HOOP HOPE HORN HOSE HOST HOUR HUGE HUMP HUNT IDEA IRON ITCH JEEP JUMP JUNK KEEP KICK KIND KING KISS KITE KIWI KNEE KNIT KNOT KNOW LACE LAKE LAMB LAMP LAND LANE LAST LATE LAWN LAZY LEAD LEAF LEAK LEAN LEAP LEFT LEND LESS LIFE LIFT LIKE LIME LINE LINK LION LIST LIVE LOAD LOAF LOOK LOOP LOUD LOVE LUCK LUMP LUNG MADE MAIL MAIN MAKE MANE MANY MASK MAST MEAL MEAT MELT MENU MICE MILE MILK MIND MINE MINT MISS MIST MITT MOLE MOON MORE MOSS MOST MOTH MOVE MUCH MULE NAIL NAME NEAT NECK NEED NEST NEWS NEXT NICE NINE NOSE NOTE OVEN OVER PACK PAGE PAIL PAIN PAIR PALM PARK PART PASS PAST PATH PEAK PEAR PEEL PICK PILE PINE PINK PIPE PLAN PLAY PLOT PLUG PLUM POEM POLE POND PONY POOL POUR PULL PUMP PUSH QUIZ RACE RAFT RAIN RAKE RAMP REST RICE RICH RIDE RING RIPE ROAD ROAR ROBE ROCK ROLL ROOF ROOM ROOT ROPE ROSE RUBY RULE RUSH SACK SAFE SAIL SALE SALT SAME SAND SAVE SEAL SEAT SEED SEEN SELF SELL SEND SHIP SHOE SHOP SHOT SHOW SHUT SIDE SIGN SILK SING SINK SIZE SKIP SLAM SLED SLIP SLOW SNAP SNOW SOAP SOCK SOFA SOFT SOIL SOME SONG SOON SORT SOUP SPIN SPOT STAR STAY STEM STEP STEW STIR STOP SUCH SUIT SWAN SWIM TACK TAIL TAKE TALE TALK TALL TANK TAPE TASK TEAM TELL TENT TEST THAN THAT THEM THEN THEY THIN THIS TIDE TIDY TILE TIME TINY TIRE TOAD TOES TONE TOOL TOUR TOWN TOYS TRAM TRAP TRAY TREE TRIM TRIP TRUE TUBE TUNA TUNE TURN TWIN VASE VEST VIEW VINE VOTE WADE WAGE WAIT WAKE WALK WALL WAND WANT WARM WASH WAVE WEED WEEK WELL WENT WEST WHAT WHEN WHIP WIDE WIFE WILD WILL WIND WING WINK WIPE WISE WISH WOLF WOOD WOOL WORD WORK WORM WRAP YARD YARN YEAR YELL YOGA YOLK YOUR ZERO ZONE",
+  "PUPPY ACORN ADULT AFTER AGAIN AGREE ALARM ALERT ALIEN ALLEY ALONG ANGEL ANGLE ANGRY ANKLE APPLE APRON ARROW ASIDE AWARD AWAKE BADGE BAGEL BAKER BASIN BEACH BEARD BEGIN BEING BELOW BENCH BERRY BIRDS BLACK BLANK BLAST BLAZE BLEND BLESS BLINK BLOCK BLOOM BOARD BOOTS BRAIN BRAVE BREAD BREAK BRICK BRIDE BRUSH BUDDY BUILD BUNCH BUNNY CABIN CAMEL CANDY CARRY CATCH CHAIN CHAIR CHALK CHARM CHART CHASE CHEEK CHEER CHESS CHEST CHICK CHIEF CHILD CHILI CHIMP CHIRP CLEAN CLEAR CLIMB CLOCK CLOSE CLOTH CLOUD CLOWN COACH COAST COCOA COLOR COMET COUCH COUGH COUNT COVER CRANE CRAWL CREAM CREEK CRISP CROWD CROWN CRUMB CRUST CURLY DAISY DANCE DIARY DIZZY DOLLY DONUT DOUGH DOZEN DRAFT DRAIN DREAM DRESS DRIFT DRINK DRIVE EAGLE EARLY EARTH EIGHT ELBOW EMPTY ENJOY EQUAL EXTRA FAIRY FANCY FEAST FENCE FERRY FIELD FIFTY FINAL FIRST FLAME FLASH FLOAT FLOCK FLOOR FLOUR FLUTE FOCUS FORCE FRAME FRESH FRIES FRONT FROST FRUIT FUNNY GHOST GIANT GIVEN GLASS GLOBE GLOVE GOOSE GRAIN GRAND GRAPE GRASS GREAT GREEN GRILL GROUP GROWN GUESS GUIDE HABIT HAPPY HEART HEAVY HELLO HONEY HORSE HOTEL HOUSE HUMAN HURRY IGLOO IMAGE JUICE KAYAK KITTY KNIFE KOALA LABEL LARGE LAUGH LAYER LEMON LEVEL LIGHT LILAC LIMIT LLAMA LUCKY LUNCH MAGIC MANGO MAPLE MARCH MATCH MAYOR MEDAL METAL MINTY MONEY MONTH MOOSE MOTOR MOUSE MOUTH MOVIE MUDDY MUSIC NANNY NURSE OCEAN OLIVE ONION ORBIT ORDER OTTER OWNER PAINT PANDA PAPER PARTY PASTA PATCH PEACE PEACH PEARL PEDAL PENNY PHONE PIANO PICKY PIECE PILOT PINCH PIZZA PLACE PLAIN PLANE PLANT PLATE PLAZA POINT POLAR PORCH POUCH POWER PRESS PRICE PRIDE PRIZE PROUD PURSE QUEEN QUICK QUIET QUILT RADIO RAINY RAISE RANGE RAVEN REACH READY RELAX RHYME RIVER ROAST ROBIN ROBOT ROCKY ROUND ROYAL RULER SALAD SAUCE SCALE SCARF SCENE SCOOP SCORE SCOUT SEVEN SHADE SHAKE SHAPE SHARE SHARK SHEEP SHEET SHELF SHELL SHINE SHINY SHIRT SHOES SHORE SHORT SHOUT SIGHT SILLY SKATE SKIRT SKUNK SLEEP SLICE SLIDE SLIME SMART SMELL SMILE SMOKE SNACK SNAIL SNAKE SNEAK SNOWY SOCKS SOLID SOUND SOUTH SPACE SPARK SPEAK SPELL SPEND SPICE SPILL SPINE SPOON SPORT SPRAY SQUID STACK STAFF STAGE STAIR STAMP STAND STARS START STEAM STEEL STICK STILL STONE STOOL STORM STORY STOVE STRAW STRIP STUDY STUFF SUGAR SUNNY SUPER SWAMP SWEET SWING TABLE TASTE TEACH TEETH THANK THICK THING THINK THREE THROW THUMB TIGER TOAST TODAY TOOTH TOPIC TORCH TOTAL TOUCH TOWEL TOWER TRACK TRADE TRAIL TRAIN TREAT TRICK TRUCK TRUNK TRUST TRUTH TULIP TWINS UNCLE UNDER UNITY UPSET VOWEL WAGON WASTE WATCH WATER WHALE WHEAT WHEEL WHILE WHITE WHOLE WOMAN WORLD WORRY WRITE YACHT YOUNG YUMMY ZEBRA JELLY",
+  "CRAYON FOREST LADDER STREAM ANIMAL ANSWER AUTUMN BANANA BASKET BEAVER BOTTLE BRANCH BRIDGE BRIGHT BUBBLE BUCKET BUTTER BUTTON CAMERA CANDLE CARROT CASTLE CHEESE CHERRY CIRCLE CLEVER CLOSET COOKIE COTTON COUSIN COWBOY DONKEY DRAGON DRAWER EASILY ELEVEN ENGINE FAMILY FARMER FATHER FEATHER FINGER FLOWER FRIEND FROZEN GARDEN GENTLE GIGGLE GINGER GLIDER GOBLIN GUITAR HAMMER HAMSTER HAPPEN HELMET HIKING HOCKEY HUNGRY INSECT ISLAND JACKET JUNGLE KITTEN LIZARD MAGNET MARBLE MEADOW MITTEN MONKEY MOTHER NATURE NUMBER ORANGE PARENT PARROT PEBBLE PENCIL PEOPLE PEPPER PICKLE PILLOW PLANET POCKET POTATO PUDDLE PUPPET PURPLE PUZZLE RABBIT ROCKET SADDLE SCHOOL SHADOW SHOVEL SILVER SIMPLE SISTER SPIDER SPRING SQUASH SQUARE STABLE SUMMER SUNSET SUPPER SWITCH TEACUP TENNIS TICKET TOMATO TOUCAN TRAVEL TURKEY TURTLE TUNNEL VALLEY VIOLIN WALRUS WINDOW WINTER WIZARD YELLOW YOGURT ZIPPER"
+].map(l=>l.split(" "));
+const PIC = {"ANT":"🐜","APE":"🦍","ARM":"💪","AXE":"🪓","BAG":"👜","BAT":"🦇","BED":"🛏️","BEE":"🐝","BOX":"📦","BOY":"👦","BUG":"🐛","BUS":"🚌","CAB":"🚕","CAN":"🥫","CAP":"🧢","CAR":"🚗","CAT":"🐱","COW":"🐮","CRY":"😢","CUP":"🥤","DOG":"🐶","EAR":"👂","EAT":"🍽️","EGG":"🥚","ELF":"🧝","EYE":"👁️","FAN":"🪭","FIG":"🫐","FLY":"🪰","FOG":"🌫️","FOX":"🦊","GEM":"💎","GUM":"🍬","HAM":"🍖","HAT":"🎩","HEN":"🐔","HOG":"🐖","HOT":"🔥","HUG":"🤗","HUT":"🛖","ICE":"🧊","JAM":"🍓","JAR":"🫙","JET":"✈️","KEY":"🔑","KID":"🧒","KIT":"🧰","LEG":"🦵","LIP":"👄","LOG":"🪵","MAP":"🗺️","MOM":"👩","MOP":"🧹","MUD":"💩","MUG":"☕","NUT":"🥜","OAK":"🌳","OIL":"🛢️","OWL":"🦉","PAN":"🍳","PAW":"🐾","PEA":"🫛","PEN":"🖊️","PIE":"🥧","PIG":"🐷","PIN":"📌","POT":"🍲","PUP":"🐶","RAM":"🐏","RAT":"🐀","RED":"🔴","RUG":"🧶","RUN":"🏃","SAD":"😢","SAW":"🪚","SEA":"🌊","SIX":"6️⃣","SKI":"🎿","SKY":"🌌","SUN":"☀️","TEA":"🍵","TEN":"🔟","TIE":"👔","TOE":"🦶","TOP":"🔝","TOY":"🧸","TWO":"2️⃣","VAN":"🚐","WEB":"🕸️","WIG":"💇","YAK":"🐂","YAM":"🍠","ZOO":"🦁","ZIP":"🤐","ONE":"1️⃣","DAD":"👨","SPY":"🕵️","BABY":"👶","BALL":"⚽","BANK":"🏦","BARN":"🛖","BATH":"🛁","BEAN":"🫘","BEAR":"🐻","BELL":"🔔","BELT":"🥋","BIKE":"🚲","BIRD":"🐦","BLUE":"🔵","BOAT":"⛵","BONE":"🦴","BOOK":"📖","BOOT":"👢","BOWL":"🥣","BULB":"💡","BUSH":"🌳","CAKE":"🍰","CALF":"🐄","CAMP":"🏕️","CARD":"🃏","CAVE":"🕳️","CHIP":"🍟","CITY":"🏙️","CLAM":"🦪","CLAP":"👏","COAT":"🧥","COIN":"🪙","COLD":"🥶","COMB":"🪮","CONE":"🍦","COOK":"🧑‍🍳","CORN":"🌽","CRAB":"🦀","CROW":"🐦‍⬛","CUBE":"🧊","DEER":"🦌","DESK":"🪑","DISH":"🍽️","DOLL":"🪆","DOOR":"🚪","DOVE":"🕊️","DRUM":"🥁","DUCK":"🦆","FACE":"🙂","FARM":"🚜","FEET":"🦶","FIRE":"🔥","FISH":"🐟","FIST":"✊","FIVE":"5️⃣","FLAG":"🚩","FOOD":"🍔","FOOT":"🦶","FORK":"🍴","FOUR":"4️⃣","FROG":"🐸","GIFT":"🎁","GIRL":"👧","GLUE":"🧴","GOAL":"🥅","GOAT":"🐐","GOLD":"🥇","GOLF":"⛳","GOWN":"👗","HAIR":"💇","HAND":"✋","HARP":"🎵","HAWK":"🦅","HEAD":"🗣️","HILL":"⛰️","HIVE":"🐝","HOME":"🏠","HOOK":"🪝","HORN":"📯","HOSE":"🚿","JEEP":"🚙","KING":"🤴","KISS":"😘","KITE":"🪁","KIWI":"🥝","KNEE":"🦵","KNOT":"🪢","LAKE":"🏞️","LAMB":"🐑","LAMP":"💡","LEAF":"🍃","LIME":"🍋‍🟩","LION":"🦁","LOVE":"❤️","MAIL":"📬","MASK":"🎭","MEAT":"🥩","MILK":"🥛","MOON":"🌙","MOTH":"🦋","NAIL":"💅","NEST":"🪺","NINE":"9️⃣","NOSE":"👃","NOTE":"🎵","OVEN":"🔥","PALM":"🌴","PARK":"🏞️","PEAR":"🍐","PIPE":"🪈","PLUM":"🍑","POOL":"🏊","RAIN":"🌧️","RICE":"🍚","RING":"💍","ROAD":"🛣️","ROCK":"🪨","ROOF":"🏠","ROPE":"🪢","ROSE":"🌹","SAIL":"⛵","SALT":"🧂","SAND":"🏖️","SEAL":"🦭","SEED":"🌱","SHIP":"🚢","SHOE":"👟","SHOP":"🏪","SING":"🎤","SLED":"🛷","SNOW":"❄️","SOAP":"🧼","SOCK":"🧦","SOFA":"🛋️","SONG":"🎶","SOUP":"🍲","STAR":"⭐","SWAN":"🦢","SWIM":"🏊","TENT":"⛺","TIRE":"🛞","TOAD":"🐸","TOES":"🦶","TOYS":"🧸","TREE":"🌳","TUBE":"🧪","TUNA":"🐟","TWIN":"👯","VASE":"🏺","VEST":"🦺","WAVE":"🌊","WAND":"🪄","WING":"🪽","WOLF":"🐺","WOOD":"🪵","WORM":"🪱","YARN":"🧶","ZERO":"0️⃣","TRAP":"🪤","TAIL":"🐒","SNAP":"🫰","MICE":"🐭","MITT":"🧤","ACORN":"🌰","ALIEN":"👽","ANGEL":"👼","APPLE":"🍎","ARROW":"➡️","BAGEL":"🥯","BEACH":"🏖️","BEARD":"🧔","BERRY":"🍓","BIRDS":"🐦","BLOCK":"🧱","BOOTS":"👢","BRAIN":"🧠","BREAD":"🍞","BRICK":"🧱","BRIDE":"👰","BRUSH":"🪥","BUNNY":"🐰","CABIN":"🛖","CAMEL":"🐫","CANDY":"🍬","CHAIR":"🪑","CHEST":"🧰","CHICK":"🐤","CHILI":"🌶️","CLOCK":"⏰","CLOUD":"☁️","CLOWN":"🤡","COMET":"☄️","COUCH":"🛋️","CRANE":"🏗️","CROWN":"👑","DAISY":"🌼","DANCE":"💃","DONUT":"🍩","DREAM":"💭","DRESS":"👗","EAGLE":"🦅","EARTH":"🌍","EIGHT":"8️⃣","FAIRY":"🧚","FENCE":"🚧","FLAME":"🔥","FLUTE":"🪈","FRIES":"🍟","FROST":"🥶","FRUIT":"🍉","GHOST":"👻","GIANT":"🗿","GLASS":"🥛","GLOBE":"🌎","GLOVE":"🧤","GOOSE":"🪿","GRAPE":"🍇","GRASS":"🌱","HAPPY":"😀","HEART":"❤️","HONEY":"🍯","HORSE":"🐴","HOUSE":"🏠","IGLOO":"🛖","JUICE":"🧃","KAYAK":"🛶","KITTY":"🐱","KNIFE":"🔪","KOALA":"🐨","LEMON":"🍋","LIGHT":"💡","LLAMA":"🦙","LUCKY":"🍀","LUNCH":"🥪","MAGIC":"🪄","MANGO":"🥭","MAPLE":"🍁","MEDAL":"🏅","MONEY":"💵","MOOSE":"🫎","MOUSE":"🐭","MOUTH":"👄","MOVIE":"🎬","MUSIC":"🎵","NURSE":"🧑‍⚕️","OCEAN":"🌊","OLIVE":"🫒","ONION":"🧅","OTTER":"🦦","PAINT":"🎨","PANDA":"🐼","PAPER":"📄","PARTY":"🥳","PASTA":"🍝","PEACH":"🍑","PEARL":"🦪","PHONE":"📱","PIANO":"🎹","PILOT":"🧑‍✈️","PIZZA":"🍕","PLANE":"✈️","PLANT":"🪴","PLATE":"🍽️","POLAR":"🐻‍❄️","PRIZE":"🏆","PUPPY":"🐶","PURSE":"👛","QUEEN":"👸","QUILT":"🛏️","RADIO":"📻","RAVEN":"🐦‍⬛","ROBIN":"🐦","ROBOT":"🤖","RULER":"📏","SALAD":"🥗","SCARF":"🧣","SEVEN":"7️⃣","SHARK":"🦈","SHEEP":"🐑","SHELL":"🐚","SHIRT":"👕","SHOES":"👟","SKATE":"⛸️","SKIRT":"👗","SKUNK":"🦨","SLEEP":"😴","SMILE":"😃","SNACK":"🍿","SNAIL":"🐌","SNAKE":"🐍","SOCKS":"🧦","SPOON":"🥄","SQUID":"🦑","STARS":"✨","STONE":"🪨","STORM":"⛈️","STRAW":"🥤","SUGAR":"🍬","SUNNY":"🌞","SWING":"🛝","TABLE":"🍽️","TEETH":"🦷","THREE":"3️⃣","THUMB":"👍","TIGER":"🐯","TOAST":"🍞","TOOTH":"🦷","TORCH":"🔦","TOWEL":"🧻","TOWER":"🗼","TRAIN":"🚆","TRUCK":"🚚","TULIP":"🌷","TWINS":"👯","WAGON":"🛒","WATCH":"⌚","WATER":"💧","WHALE":"🐳","WHEAT":"🌾","WHEEL":"🛞","WORLD":"🌍","YACHT":"🛥️","ZEBRA":"🦓","SPRAY":"🧴","SLIDE":"🛝","TRAIL":"🥾","ANIMAL":"🐾","BANANA":"🍌","BASKET":"🧺","BEAVER":"🦫","BOTTLE":"🍼","BRIDGE":"🌉","BUBBLE":"🫧","BUCKET":"🪣","BUTTER":"🧈","BUTTON":"🔘","CAMERA":"📷","CANDLE":"🕯️","CARROT":"🥕","CASTLE":"🏰","CHEESE":"🧀","CHERRY":"🍒","CIRCLE":"⭕","COOKIE":"🍪","COWBOY":"🤠","CRAYON":"🖍️","DONKEY":"🫏","DRAGON":"🐉","ENGINE":"🚂","FAMILY":"👪","FARMER":"🧑‍🌾","FEATHER":"🪶","FINGER":"👆","FLOWER":"🌸","FOREST":"🌲","FRIEND":"🤝","FROZEN":"🥶","GARDEN":"🪴","GUITAR":"🎸","HAMMER":"🔨","HAMSTER":"🐹","HELMET":"⛑️","HOCKEY":"🏒","INSECT":"🐞","ISLAND":"🏝️","JACKET":"🧥","JUNGLE":"🌴","KITTEN":"🐱","LADDER":"🪜","LIZARD":"🦎","MAGNET":"🧲","MITTEN":"🧤","MONKEY":"🐒","MOTHER":"👩","NUMBER":"🔢","ORANGE":"🍊","PARROT":"🦜","PENCIL":"✏️","PEPPER":"🌶️","PICKLE":"🥒","PILLOW":"🛏️","PLANET":"🪐","POTATO":"🥔","PUZZLE":"🧩","RABBIT":"🐇","ROCKET":"🚀","SCHOOL":"🏫","SHOVEL":"🪏","SPIDER":"🕷️","SQUARE":"🟥","SUMMER":"🏖️","SUNSET":"🌅","TEACUP":"🍵","TENNIS":"🎾","TICKET":"🎟️","TOMATO":"🍅","TURKEY":"🦃","TURTLE":"🐢","VIOLIN":"🎻","WALRUS":"🦭","WINDOW":"🪟","WINTER":"⛄","WIZARD":"🧙","YELLOW":"🟡","YOGURT":"🥛","ZIPPER":"🤐","PUPPET":"🧸","FATHER":"👨","SILVER":"🥈","TRAVEL":"🧳"};
 const COLORS = ["#ff6b9d","#ffa94d","#ffd43b","#69db7c","#4dabf7","#9775fa","#f783ac","#38d9a9","#ff8787","#74c0fc"];
 const ALPHA = "ABCDEFGHIJKLMNOPRSTUWY";
 
@@ -260,11 +307,43 @@ const SND = {
   v:"vuh", w:"wuh", y:"yuh", z:"zuh", ks:"ks", kw:"kwuh", ts:"ts", sh:"shh",
   a:"ah", e:"eh", i:"ih", o:"aw", u:"uh",                 // short vowels
   ay:"a", ee:"e", ie:"i", oh:"o", oo:"ooh",                // long vowels (the voice says the letter's name)
-  ow:"ow", ar:"are", or:"or", er:"er", air:"air"
+  ow:"ow", ar:"are", or:"or", er:"er", air:"air", ch:"ch", th:"th", ng:"ng", oy:"oy", aw:"aw"
 };
 const BASIC = {a:"a",b:"b",c:"k",d:"d",e:"e",f:"f",g:"g",h:"h",i:"i",j:"j",k:"k",l:"l",m:"m",n:"n",o:"o",p:"p",q:"kw",r:"r",s:"s",t:"t",u:"u",v:"v",w:"w",x:"ks",y:"y",z:"z"};
 function saySound(tok, interrupt=true){ if(tok && tok!=="-" && SND[tok]) Speech.say(SND[tok], {rate:.8, pitch:1.2, interrupt}); }
-function sayPop(i){ if(opt.phonics && PH[word]) saySound(PH[word].split(" ")[i]); else sayLetter(word[i]); }
+/* Phonics for words without a hand-made entry: common spelling patterns.
+   Returns one sound per letter, "-" for letters that are silent or part of a team. */
+function autoPhon(w){
+  w = w.toLowerCase(); const n = w.length, t = new Array(n).fill(null);
+  const V = "aeiou", isV = c => V.includes(c);
+  const team = (i, len, snd) => { for(let k=0;k<len-1;k++) t[i+k] = "-"; t[i+len-1] = snd; };
+  // magic e: vowel + one consonant + final e (cake, bike, rope, cube)
+  if(n >= 3 && w[n-1] === "e" && !isV(w[n-2]) && isV(w[n-3]) && !(n >= 4 && isV(w[n-4]))){
+    t[n-3] = {a:"ay", e:"ee", i:"ie", o:"oh", u:"oo"}[w[n-3]]; t[n-1] = "-";
+  }
+  if(w.endsWith("mb")) t[n-1] = "-";                                              // silent b: lamb, thumb, comb
+  const T3 = {igh:"ie", tch:"ch", air:"air", ear:"eer", dge:"j"};
+  const T2 = {sh:"sh", ch:"ch", th:"th", wh:"w", ph:"f", ck:"k", ng:"ng", qu:"kw", kn:"n", wr:"r",
+    ee:"ee", ea:"ee", ai:"ay", ay:"ay", oa:"oh", oe:"oh", oo:"oo", ou:"ow", ow:"ow", oi:"oy", oy:"oy",
+    ar:"ar", or:"or", er:"er", ir:"er", ur:"er", ue:"oo", ew:"oo", aw:"aw", au:"aw", ie:"ie", ey:"ee"};
+  let i = 0;
+  while(i < n){
+    if(t[i] !== null){ i++; continue; }
+    const s3 = w.substr(i,3), s2 = w.substr(i,2);
+    if(T3[s3] && t[i+1] === null && t[i+2] === null){ team(i, 3, T3[s3] === "eer" ? "ee" : T3[s3]); if(T3[s3]==="eer"){ t[i] = "-"; t[i+1] = "ee"; t[i+2] = "r"; } i += 3; continue; }
+    if(T2[s2] && t[i+1] === null){ team(i, 2, T2[s2]); i += 2; continue; }
+    const c = w[i], nx = w[i+1];
+    if(nx === c && !isV(c)){ team(i, 2, BASIC[c]); i += 2; continue; }            // double letters: ll, ss, ff
+    if(c === "c") t[i] = "eiy".includes(nx || "") ? "s" : "k";
+    else if(c === "y") t[i] = i === 0 ? "y" : (i === n-1 ? (/[aeiou]/.test(w.slice(0,i)) ? "ee" : "ie") : "i");
+    else if(c === "e" && i === n-1 && n > 2) t[i] = "-";                          // silent final e
+    else t[i] = BASIC[c] || c;
+    i++;
+  }
+  return t.map(x => x || "-");
+}
+function phonOf(w){ return PH[w] ? PH[w].split(" ") : autoPhon(w); }
+function sayPop(i){ if(opt.phonics) saySound(phonOf(word)[i]); else sayLetter(word[i]); }
 function saySounds(){ Speech.stop(); "abcdefghijklmnopqrstuvwxyz".split("").forEach(ch=>saySound(BASIC[ch], false)); }
 
 /* ---------- progress tracking (saved on this device only) ---------- */
@@ -289,7 +368,7 @@ function buildStats(log){
   let order = 0, notIn = 0;
   for(const e of log){
     const wi = Math.max(0, Math.floor(Math.round((dayStart(e.t) - start)/DAY) / 7));
-    const w = weeks[wi] || (weeks[wi] = { n:wi+1, from:start+wi*7*DAY, words:0, days:new Set(), right:0, wrong:0, ms:0, noHint:0, nhRight:0, nhWrong:0, phon:0, lv:[0,0,0], lt:{} });
+    const w = weeks[wi] || (weeks[wi] = { n:wi+1, from:start+wi*7*DAY, words:0, days:new Set(), right:0, wrong:0, ms:0, noHint:0, nhRight:0, nhWrong:0, phon:0, lv:[0,0,0,0], lt:{} });
     const c = e.c || [];
     w.words++; w.days.add(dayStart(e.t)); w.right += e.w.length; w.wrong += c.length; w.ms += e.ms||0; w.lv[e.l||0]++;
     if(!e.h){ w.noHint++; w.nhRight += e.w.length; w.nhWrong += c.length; }
@@ -316,11 +395,11 @@ function buildStats(log){
 }
 const fmtD = t => new Date(t).toLocaleDateString(undefined, {month:"short", day:"numeric"});
 function reportText(st, name){
-  if(!st) return "Word Pop progress: no words spelled yet.";
-  const L = ["WORD POP PROGRESS REPORT" + (name ? " - " + name : ""), "Started " + fmtD(st.start) + " | " + st.total + " words spelled in total", ""];
+  if(!st) return "Word Pop Kids progress: no words spelled yet.";
+  const L = ["WORD POP KIDS PROGRESS REPORT" + (name ? " - " + name : ""), "Started " + fmtD(st.start) + " | " + st.total + " words spelled in total", ""];
   for(const w of st.weeks){
     L.push("WEEK " + w.n + " (" + fmtD(w.from) + " - " + fmtD(w.to) + ")");
-    L.push("  Words spelled: " + w.words + " on " + w.days + " day" + (w.days===1?"":"s") + "  (easy " + w.lv[0] + ", medium " + w.lv[1] + ", big " + w.lv[2] + ")");
+    L.push("  Words spelled: " + w.words + " on " + w.days + " day" + (w.days===1?"":"s") + "  (easy " + w.lv[0] + ", medium " + w.lv[1] + ", big " + w.lv[2] + ", huge " + w.lv[3] + ")");
     L.push("  Right taps: " + w.acc + "%   Average time per word: " + w.secs + "s");
     L.push("  Spelled without letter hints: " + w.noHint + " word" + (w.noHint===1?"":"s") + (w.spellAcc!==null ? " (" + w.spellAcc + "% right taps)" : ""));
     if(w.phon) L.push("  Words played in phonics mode: " + w.phon);
@@ -354,7 +433,7 @@ function renderReport(){
       + '<div class="st"><b>' + w.secs + "s" + delta(w.secs,p.secs,true) + "</b><span>average time per word</span></div>"
       + '<div class="st"><b>' + w.noHint + delta(w.noHint,p.noHint) + "</b><span>spelled with hints off" + (w.spellAcc!==null ? " · " + w.spellAcc + "% right" : "") + "</span></div>"
       + "</div>"
-      + '<div class="tr">Levels: easy ' + w.lv[0] + " · medium " + w.lv[1] + " · big " + w.lv[2] + (w.phon ? " · phonics mode " + w.phon : "") + "</div>"
+      + '<div class="tr">Levels: easy ' + w.lv[0] + " · medium " + w.lv[1] + " · big " + w.lv[2] + " · huge " + w.lv[3] + (w.phon ? " · phonics mode " + w.phon : "") + "</div>"
       + '<div class="tr">Tricky letters: <b style="color:#fff">' + (w.tricky.length ? w.tricky.join(" ") : "none 🎉") + "</b></div></div>";
   });
   h += "<h3>Letters</h3><div class=\"grid\">" + Object.keys(st.letters).map(ch=>{ const L = st.letters[ch];
@@ -370,12 +449,26 @@ function renderReport(){
 function buzz(ms){ try{ navigator.vibrate && navigator.vibrate(ms); }catch(e){} }
 
 /* ---------- round ---------- */
+/* Shuffle bag: every word in a level comes up once, in random order, before any word repeats.
+   The bag is saved, so it carries on where it left off next time the game is opened. */
+function nextFromBag(){
+  const key = "wp_bag_" + lvl, list = WORDS[lvl];
+  let bag = [];
+  try { bag = JSON.parse(localStorage.getItem(key) || "[]").filter(w => list.includes(w)); } catch(e){}
+  if(!bag.length){
+    bag = list.slice();
+    for(let i = bag.length-1; i > 0; i--){ const j = Math.floor(Math.random()*(i+1)); [bag[i], bag[j]] = [bag[j], bag[i]]; }
+    if(bag.length > 1 && bag[bag.length-1] === word) [bag[0], bag[bag.length-1]] = [bag[bag.length-1], bag[0]];
+  }
+  const w = bag.pop();
+  try { localStorage.setItem(key, JSON.stringify(bag)); } catch(e){}
+  return w;
+}
 function newWord(){
-  const list = WORDS[lvl];
-  let pick; do { pick = list[Math.floor(Math.random()*list.length)]; } while(pick[0]===word && list.length>1);
-  [word, emoji] = pick; idx = 0; wordMs = 0; slips = [];
+  word = nextFromBag(); emoji = PIC[word] || "🔊"; idx = 0; wordMs = 0; slips = [];
   $("emoji").textContent = emoji;
-  $("levelPill").textContent = ["Easy","Medium","Big"][lvl];
+  $("slots").classList.toggle("long", word.length > 5);
+  $("levelPill").textContent = ["Easy","Medium","Big","Huge"][lvl];
   const s = $("slots"); s.innerHTML = "";
   [...word].forEach((ch,i)=>{ const d = document.createElement("div"); d.className="slot"+(i===0?" next":""); d.innerHTML = opt.hint?`<span class="ghost">${ch}</span>`:""; s.appendChild(d); });
   bubbles.forEach(b=>b.el.remove()); bubbles = []; queue = [];
@@ -387,7 +480,7 @@ function nextLetter(){ return word[idx]; }
 
 function spawn(initial){
   const W = field.clientWidth, H = field.clientHeight;
-  const size = Math.max(66, Math.min(96, W/4.6));
+  const size = Math.max(66, Math.min(150, Math.min(W, H*0.75)/4.6));   // phone ~85px, iPad up to 150px
   const need = nextLetter();
   const onScreen = bubbles.some(b=>b.ch===need);
   let ch;
@@ -402,7 +495,7 @@ function spawn(initial){
   el.style.backgroundColor = COLORS[ci];
   const b = { el, ch, size, ci,
     x: Math.random()*(W-size), y: initial ? H*0.3 + Math.random()*H*0.7 : H + 10,
-    vy: (opt.calm? 22 : 38) + Math.random()*(opt.calm?12:30) + lvl*6,
+    vy: ((opt.calm? 22 : 38) + Math.random()*(opt.calm?12:30) + lvl*6) * Math.max(1, H/650),
     ph: Math.random()*6.28, sway: 10+Math.random()*16, bx:0, colorT: Math.random()*1.5 };
   b.bx = b.x;
   el.addEventListener("pointerdown", e=>{ e.preventDefault(); tap(b); });
@@ -482,6 +575,7 @@ document.querySelectorAll("[data-lvl]").forEach(btn=>btn.addEventListener("click
 }));
 $("menuBtn").onclick = ()=>{ Speech.stop(); running=false; $("overlay").classList.remove("hide"); };
 $("sayBtn").onclick = ()=>{ audio(); Speech.unlock(); say(word); };
+$("emoji").onclick = ()=>{ audio(); Speech.unlock(); say(word); };
 const abcLabel = () => { $("abcBtn").textContent = opt.phonics ? "🔤 Hear the letter sounds" : "🔤 Hear the ABCs"; };
 $("abcBtn").onclick = ()=>{ audio(); Speech.unlock(); opt.phonics ? saySounds() : sayABC(); };
 [["tHint","hint"],["tSound","sound"],["tCalm","calm"],["tPhonics","phonics"]].forEach(([id,k])=>{

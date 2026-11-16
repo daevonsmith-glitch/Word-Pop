@@ -1,10 +1,13 @@
-# Word Pop 🫧
+# Word Pop Kids 🫧
 
 Pop the letter bubbles in order to spell the word. Made for kids and anyone who stims: no timer, no penalty for wrong taps, color-changing bubbles, and every letter and finished word is spoken out loud.
 
 - `www/` – the game itself (this is what goes on Cloudflare)
 - `.github/workflows/android-apk.yml` – builds the Android APK on GitHub automatically
 - `assets/` – app icon and splash used for the Android app
+
+- `STORE-GUIDE.md` – step by step for Google Play and the App Store (iPhone and iPad)
+- `.github/workflows/ios-testflight.yml` – builds the iPhone and iPad app on GitHub
 
 ---
 
@@ -17,7 +20,7 @@ Pop the letter bubbles in order to spell the word. Made for kids and anyone who 
 ## 2. Get the Android APK
 
 1. In the repo, open the **Actions** tab. "Build Android APK" starts by itself (about 5–8 minutes). If Actions asks you to enable workflows, tap enable.
-2. When it shows a green check, go to the repo's **Releases** (right side of the main page) → **Word Pop (latest build)** → tap **WordPop.apk**.
+2. When it shows a green check, go to the repo's **Releases** (right side of the main page) → **Word Pop Kids (latest build)** → tap **WordPopKids.apk**.
 3. Open the downloaded file on the Android phone. Android will ask to allow installs from your browser/files app — allow it, then **Install**.
 
 Every time you change a file on `main`, a fresh APK is built and replaces the old one on the same Releases page.

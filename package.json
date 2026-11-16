@@ -1,18 +1,15 @@
 {
   "name": "word-pop",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
-  "description": "Word Pop - pop the letter bubbles to spell the word",
-  "scripts": {
-    "android:build": "npx cap sync android && cd android && ./gradlew assembleDebug"
-  },
+  "description": "Word Pop Kids - pop the letter bubbles to spell the word",
   "dependencies": {
-    "@capacitor/android": "^7.0.0",
-    "@capacitor/core": "^7.0.0",
-    "@capacitor-community/text-to-speech": "^6.0.0"
+    "@capacitor/android": "^8.0.0",
+    "@capacitor/core": "^8.0.0",
+    "@capacitor/ios": "^8.0.0",
+    "@capacitor-community/text-to-speech": "^8.0.0"
   },
   "devDependencies": {
-    "@capacitor/assets": "^3.0.5",
-    "@capacitor/cli": "^7.0.0"
+    "@capacitor/cli": "^8.0.0"
   }
 }

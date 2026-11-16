@@ -219,16 +219,28 @@ const winSound = () => [523,659,784,1046].forEach((f,i)=>setTimeout(()=>tone(f,.
    Letters are sent lowercase: capitals make iPhone say "capital A", and spelled-out
    names like "ay" get misread as "I". */
 const Speech = (() => {
-  const cap = window.Capacitor;
-  const isApp = !!(cap && cap.isNativePlatform && cap.isNativePlatform());
-  let nativeTTS = null, pluginMissing = false;
-  try {
-    if (isApp && cap.registerPlugin) {
-      if (cap.isPluginAvailable && !cap.isPluginAvailable("TextToSpeech")) pluginMissing = true;
-      else nativeTTS = cap.registerPlugin("TextToSpeech");
-    }
-  } catch(e) { pluginMissing = true; }
-  const web = !nativeTTS && "speechSynthesis" in window ? window.speechSynthesis : null;
+  // Where are we running? Checked again on every tap, in case the app's bridge loads late.
+  let nativeTTS = null, pluginMissing = false, isApp = false;
+  function findNative(){
+    if(nativeTTS) return nativeTTS;
+    const cap = window.Capacitor;
+    if(!cap) return null;
+    try{
+      const plat = cap.getPlatform ? cap.getPlatform() : "";
+      isApp = !!((cap.isNativePlatform && cap.isNativePlatform()) || (plat && plat !== "web"));
+      if(!isApp) return null;
+      if(cap.Plugins && cap.Plugins.TextToSpeech) nativeTTS = cap.Plugins.TextToSpeech;
+      else if(cap.isPluginAvailable && !cap.isPluginAvailable("TextToSpeech")) pluginMissing = true;
+      else if(cap.registerPlugin) nativeTTS = cap.registerPlugin("TextToSpeech");
+    }catch(e){ pluginMissing = true; }
+    return nativeTTS;
+  }
+  findNative();
+  const ua = navigator.userAgent || "";
+  const inAppViewer = /Android/.test(ua) && /; wv\)/.test(ua);   // the built-in viewer inside another app
+  let web = null;
+  const findWeb = () => { if(!nativeTTS && !web && "speechSynthesis" in window) web = window.speechSynthesis; return web; };
+  findWeb();
   let lastError = "", spokeOnce = false;
   const report = () => { try { showVoiceInfo(); } catch(e){} };
 
@@ -245,6 +257,7 @@ const Speech = (() => {
   const keep = [];  // hold utterances so Chrome doesn't garbage-collect them mid-speech
 
   function sayOnce(text, o){
+    findNative(); if(!nativeTTS) findWeb();
     if(nativeTTS){
       // queueStrategy 0 = replace whatever is being said. Safety timer in case the phone never says "done".
       return new Promise(res => {
@@ -297,6 +310,7 @@ const Speech = (() => {
     // call from a tap so iPhone/Android allow speech for the rest of the game
     unlock(){
       try{
+        findNative(); if(!nativeTTS) findWeb();
         if(web && !this._u){ this._u = true; const u = new SpeechSynthesisUtterance(" "); u.volume = 0; web.speak(u); }
         if(web) pickVoice();
       }catch(e){}
@@ -305,10 +319,15 @@ const Speech = (() => {
     // what the menu shows under "Hear the ABCs"
     info(){
       if(pluginMissing) return { bad:true, text:"Voice problem: this app was built without the speech add-on. Rebuild it on GitHub." };
-      if(!nativeTTS && !web) return { bad:true, text:"Voice problem: this browser has no speech voice. Try Chrome or Safari." };
+      findNative(); if(!nativeTTS) findWeb();
+      if(!nativeTTS && !web){
+        if(isApp) return { bad:true, text:"Voice problem: the app can't reach the phone's speech engine. Send this message to Claude." };
+        if(inAppViewer) return { bad:true, text:"No voice here: this game is open inside another app (like Claude or GitHub). Open it in Chrome, or install the Word Pop Kids app." };
+        return { bad:true, text:"Voice problem: this browser has no speech voice. Try Chrome or Safari." };
+      }
       if(lastError) return { bad:true, fix:!!nativeTTS, text:"Voice problem: " + lastError };
       if(!opt.sound) return { bad:false, text:"Sounds are off." };
-      return { bad:false, text:(nativeTTS ? "Voice: the phone's speech engine" : "Voice: the browser's speech") + (spokeOnce ? " ✓ working" : "") };
+      return { bad:false, text:(nativeTTS ? "Voice: the phone's speech engine (app)" : "Voice: the browser's speech") + (spokeOnce ? " ✓ working" : "") };
     },
     // Android only: opens the phone's screen for installing a speech voice
     openInstall(){ try{ nativeTTS && nativeTTS.openInstall && nativeTTS.openInstall().catch(()=>{}); }catch(e){} }

@@ -12,7 +12,7 @@ Step by step for both stores, publishing under your own name (personal accounts)
 
 ### 0A. Upload the game
 1. Go to **github.com/daevonsmith-glitch/Word-Pop**.
-2. **Add file → Upload files**, add the new **word-pop.zip**, and tap **Commit changes**. The build unpacks it by itself.
+2. **Add file → Upload files**, add the new zip (any file name), and tap **Commit changes**. The build unpacks it by itself.
 
 ### 0B. Replace the Android build file
 1. Open **github.com/daevonsmith-glitch/Word-Pop/edit/main/.github/workflows/android-apk.yml** in Safari or Chrome.
@@ -263,17 +263,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Unpack word-pop.zip
+      # Unpacks the game from any .zip uploaded to the repository (any file name), then saves the files.
+      - name: Unpack uploaded zip
         run: |
-          if [ -f word-pop.zip ]; then
-            unzip -q -o word-pop.zip -d /tmp/wp
-            rm -rf /tmp/wp/word-pop/.github
-            cp -r /tmp/wp/word-pop/. .
-            git rm -q word-pop.zip
+          Z=$(ls -t *.zip 2>/dev/null | head -1)
+          if [ -n "$Z" ]; then
+            echo "Unpacking $Z"
+            rm -rf /tmp/wp && mkdir /tmp/wp && unzip -q -o "$Z" -d /tmp/wp
+            P=$(find /tmp/wp -maxdepth 3 -name package.json -not -path "*/node_modules/*" | head -1)
+            SRC=$(dirname "$P")
+            rm -rf "$SRC/.github"
+            cp -r "$SRC/." .
+            git rm -q --ignore-unmatch *.zip; rm -f *.zip
             git add -A
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git commit -q -m "Unpack game files from word-pop.zip"
+            git commit -q -m "Unpack game files from $Z"
             git push
           fi
 

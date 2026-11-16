@@ -127,6 +127,9 @@
     #slots.long .slot { width:78px; height:96px; font-size:54px; }
     #emoji { font-size:120px; }
   }
+  .vinfo { font-size:14px; color:var(--soft); margin:-2px 4px 6px; min-height:1em; }
+  .vinfo.bad { color:#fecaca; font-weight:800; }
+  .big.hide { display:none; }
 </style>
 </head>
 <body>
@@ -158,6 +161,8 @@
     <div class="opt"><span>Calm mode (slow bubbles)</span><button class="toggle" id="tCalm"></button></div>
     <div class="opt"><span>Phonics (say letter sounds)</span><button class="toggle" id="tPhonics"></button></div>
     <button class="big" id="abcBtn" style="background:#c7d2fe;font-size:18px">🔤 Hear the ABCs</button>
+    <div id="voiceInfo" class="vinfo"></div>
+    <button class="big hide" id="voiceFix" style="background:#fde68a;font-size:16px">Install a speech voice</button>
     <button class="big" id="reportBtn" style="background:#fff;font-size:18px">📊 Progress report</button>
   </div>
 </div>
@@ -215,11 +220,17 @@ const winSound = () => [523,659,784,1046].forEach((f,i)=>setTimeout(()=>tone(f,.
    names like "ay" get misread as "I". */
 const Speech = (() => {
   const cap = window.Capacitor;
-  let nativeTTS = null;
+  const isApp = !!(cap && cap.isNativePlatform && cap.isNativePlatform());
+  let nativeTTS = null, pluginMissing = false;
   try {
-    if (cap && cap.isNativePlatform && cap.isNativePlatform() && cap.registerPlugin) nativeTTS = cap.registerPlugin("TextToSpeech");
-  } catch(e) {}
+    if (isApp && cap.registerPlugin) {
+      if (cap.isPluginAvailable && !cap.isPluginAvailable("TextToSpeech")) pluginMissing = true;
+      else nativeTTS = cap.registerPlugin("TextToSpeech");
+    }
+  } catch(e) { pluginMissing = true; }
   const web = !nativeTTS && "speechSynthesis" in window ? window.speechSynthesis : null;
+  let lastError = "", spokeOnce = false;
+  const report = () => { try { showVoiceInfo(); } catch(e){} };
 
   let voice = null;
   function pickVoice(){
@@ -235,7 +246,14 @@ const Speech = (() => {
 
   function sayOnce(text, o){
     if(nativeTTS){
-      return nativeTTS.speak({ text, lang:"en-US", rate:o.rate, pitch:o.pitch, volume:1.0, category:"playback" }).catch(()=>{});
+      // queueStrategy 0 = replace whatever is being said. Safety timer in case the phone never says "done".
+      return new Promise(res => {
+        let done = false; const fin = () => { if(!done){ done = true; clearTimeout(t); res(); } };
+        const t = setTimeout(fin, 900 + text.length * 260 / o.rate);
+        nativeTTS.speak({ text, lang:"en-US", rate:o.rate, pitch:o.pitch, volume:1.0, category:"playback", queueStrategy:0 })
+          .then(() => { if(!spokeOnce || lastError){ spokeOnce = true; lastError = ""; report(); } fin(); })
+          .catch(e => { lastError = (e && (e.message || e.errorMessage)) || String(e); report(); fin(); });
+      });
     }
     if(!web) return Promise.resolve();
     return new Promise(res => {
@@ -243,7 +261,9 @@ const Speech = (() => {
       const u = new SpeechSynthesisUtterance(text);
       u.lang = "en-US"; if(voice) u.voice = voice;
       u.rate = o.rate; u.pitch = o.pitch; u.volume = 1;
-      u.onend = fin; u.onerror = fin; keep.push(u);
+      u.onend = () => { if(!spokeOnce || lastError){ spokeOnce = true; lastError = ""; report(); } fin(); };
+      u.onerror = e => { const er = e && e.error; if(er && er !== "interrupted" && er !== "canceled"){ lastError = er; report(); } fin(); };
+      keep.push(u);
       const t = setTimeout(fin, 900 + text.length * 260 / o.rate);  // safety net if onend never fires
       if(web.paused) web.resume();
       web.speak(u);
@@ -257,9 +277,10 @@ const Speech = (() => {
     sayOnce(item.text, item).then(() => { if(my === gen){ busy = false; pump(); } });
   }
 
-  function stop(){
+  // hard=true also silences the phone's engine (menu, ABC test). Letters just replace the last sound.
+  function stop(hard){
     gen++; queue = []; busy = false;
-    try{ if(nativeTTS) nativeTTS.stop().catch(()=>{}); else if(web) web.cancel(); }catch(e){}
+    try{ if(nativeTTS){ if(hard) nativeTTS.stop().catch(()=>{}); } else if(web) web.cancel(); }catch(e){}
   }
 
   return {
@@ -268,7 +289,7 @@ const Speech = (() => {
     say(text, {rate=.85, pitch=1.2, interrupt=true}={}){
       if(!opt.sound) return;
       const wasBusy = busy;
-      if(interrupt) stop();
+      if(interrupt) stop(false);
       queue.push({text, rate, pitch});
       // Chrome on Android drops speak() called in the same moment as cancel(); wait a beat
       if(interrupt && wasBusy && web) setTimeout(pump, 80); else pump();
@@ -280,9 +301,24 @@ const Speech = (() => {
         if(web) pickVoice();
       }catch(e){}
     },
-    stop
+    stop: () => stop(true),
+    // what the menu shows under "Hear the ABCs"
+    info(){
+      if(pluginMissing) return { bad:true, text:"Voice problem: this app was built without the speech add-on. Rebuild it on GitHub." };
+      if(!nativeTTS && !web) return { bad:true, text:"Voice problem: this browser has no speech voice. Try Chrome or Safari." };
+      if(lastError) return { bad:true, fix:!!nativeTTS, text:"Voice problem: " + lastError };
+      if(!opt.sound) return { bad:false, text:"Sounds are off." };
+      return { bad:false, text:(nativeTTS ? "Voice: the phone's speech engine" : "Voice: the browser's speech") + (spokeOnce ? " ✓ working" : "") };
+    },
+    // Android only: opens the phone's screen for installing a speech voice
+    openInstall(){ try{ nativeTTS && nativeTTS.openInstall && nativeTTS.openInstall().catch(()=>{}); }catch(e){} }
   };
 })();
+function showVoiceInfo(){
+  const i = Speech.info(), el = $("voiceInfo"); if(!el) return;
+  el.textContent = i.text; el.classList.toggle("bad", !!i.bad);
+  $("voiceFix").classList.toggle("hide", !i.fix);
+}
 function say(t){ Speech.say(t.toLowerCase(), {rate:.8}); }
 function sayLetter(ch){ Speech.say(ch.toLowerCase(), {rate:.9, pitch:1.3}); }
 function sayABC(){ Speech.stop(); "abcdefghijklmnopqrstuvwxyz".split("").forEach((ch,i)=>Speech.say(ch, {rate:.9, pitch:1.3, interrupt:false})); }
@@ -577,11 +613,13 @@ $("menuBtn").onclick = ()=>{ Speech.stop(); running=false; $("overlay").classLis
 $("sayBtn").onclick = ()=>{ audio(); Speech.unlock(); say(word); };
 $("emoji").onclick = ()=>{ audio(); Speech.unlock(); say(word); };
 const abcLabel = () => { $("abcBtn").textContent = opt.phonics ? "🔤 Hear the letter sounds" : "🔤 Hear the ABCs"; };
+$("voiceFix").onclick = ()=> Speech.openInstall();
+showVoiceInfo();
 $("abcBtn").onclick = ()=>{ audio(); Speech.unlock(); opt.phonics ? saySounds() : sayABC(); };
 [["tHint","hint"],["tSound","sound"],["tCalm","calm"],["tPhonics","phonics"]].forEach(([id,k])=>{
   $(id).classList.toggle("on", !!opt[k]);
   $(id).onclick = ()=>{ opt[k]=!opt[k]; $(id).classList.toggle("on", opt[k]); abcLabel();
-    try{ localStorage.setItem("wp_opt", JSON.stringify(opt)); }catch(e){} };
+    try{ localStorage.setItem("wp_opt", JSON.stringify(opt)); }catch(e){} showVoiceInfo(); };
 });
 abcLabel();
 

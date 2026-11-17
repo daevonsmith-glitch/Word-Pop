@@ -1,6 +1,6 @@
 // Word Pop offline cache. Bump VERSION whenever you change the game so phones get the update.
-const VERSION = "word-pop-v9";
-const FILES = ["./", "index.html", "privacy.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png", "fonts/Poppins-Bold.ttf", "fonts/Poppins-Medium.ttf"];
+const VERSION = "word-pop-v10";
+const FILES = ["./", "index.html", "privacy.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png", "icons/apple-touch-icon-kids.png", "fonts/Poppins-Bold.ttf", "fonts/Poppins-Medium.ttf"];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
